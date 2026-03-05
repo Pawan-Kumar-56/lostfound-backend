@@ -22,6 +22,11 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        return ResponseEntity.ok("Backend is working! AuthController is accessible.");
+    }
+    
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest authRequest) {
         try {

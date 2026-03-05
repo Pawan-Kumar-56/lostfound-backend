@@ -23,6 +23,11 @@ public class ItemController {
     @Autowired
     private ItemService itemService;
     
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        return ResponseEntity.ok("Backend is working! ItemController is accessible.");
+    }
+    
     @GetMapping
     public ResponseEntity<Page<ItemResponse>> getAllItems(
             @RequestParam(defaultValue = "0") int page,
