@@ -30,18 +30,35 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest authRequest) {
         try {
-            System.out.println("Registration request: " + authRequest.getEmail());
-            System.out.println("Registration password: " + authRequest.getPassword());
+            System.out.println("=== REGISTRATION DEBUG ===");
+            System.out.println("Registration request received");
+            System.out.println("Email: " + authRequest.getEmail());
+            System.out.println("Password: " + (authRequest.getPassword() != null ? "Present" : "Missing"));
+            System.out.println("Full Name: " + authRequest.getFullName());
+            System.out.println("========================");
+            
+            // Validate required fields
+            if (authRequest.getEmail() == null || authRequest.getEmail().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+            }
+            if (authRequest.getPassword() == null || authRequest.getPassword().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Password is required"));
+            }
+            if (authRequest.getFullName() == null || authRequest.getFullName().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Full name is required"));
+            }
             
             AuthResponse response = authService.register(authRequest);
+            System.out.println("Registration successful for: " + authRequest.getEmail());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             System.err.println("Registration error: " + e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             System.err.println("Unexpected registration error: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(Map.of("error", "Registration failed: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of("message", "Registration failed: " + e.getMessage()));
         }
     }
     
