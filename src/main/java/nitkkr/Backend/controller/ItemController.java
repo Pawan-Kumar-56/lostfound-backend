@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = {
         "http://localhost:3000",
         "http://localhost:5173",
-        "https://lostfound-frontend-eight.vercel.app"
+        "https://lostfound-frontend-eight.vercel.app",
+        "https://*.vercel.app"
 })
 public class ItemController {
     
