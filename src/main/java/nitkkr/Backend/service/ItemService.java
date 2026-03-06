@@ -28,6 +28,10 @@ public class ItemService {
         return itemRepository.findAll(pageable).map(this::convertToResponse);
     }
     
+    public long getTotalItemCount() {
+        return itemRepository.count();
+    }
+    
     public Page<ItemResponse> searchItems(String search, Pageable pageable) {
         return itemRepository.searchItems(search, pageable).map(this::convertToResponse);
     }

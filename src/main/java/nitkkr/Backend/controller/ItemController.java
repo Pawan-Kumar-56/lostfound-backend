@@ -28,13 +28,21 @@ public class ItemController {
         return ResponseEntity.ok("Backend is working! ItemController is accessible.");
     }
     
-    @GetMapping
-    public ResponseEntity<Page<ItemResponse>> getAllItems(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ItemResponse> items = itemService.getAllItems(pageable);
-        return ResponseEntity.ok(items);
+    @GetMapping("/test-simple")
+    public ResponseEntity<String> testSimple() {
+        return ResponseEntity.ok("Simple test working - no database involved!");
+    }
+    
+    @GetMapping("/test-db")
+    public ResponseEntity<String> testDatabase() {
+        try {
+            long itemCount = itemService.getTotalItemCount();
+            return ResponseEntity.ok("Database connection working! Total items: " + itemCount);
+        } catch (Exception e) {
+            System.err.println("Database test failed: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Database test failed: " + e.getMessage());
+        }
     }
     
     @GetMapping("/search")
@@ -55,6 +63,34 @@ public class ItemController {
         Pageable pageable = PageRequest.of(page, size);
         Page<ItemResponse> items = itemService.getItemsByUser(userEmail, pageable);
         return ResponseEntity.ok(items);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<ItemResponse> getItemById(@PathVariable Long id) {
+        ItemResponse item = itemService.getItemById(id);
+        return ResponseEntity.ok(item);
+    }
+    
+    @GetMapping
+    public ResponseEntity<Page<ItemResponse>> getAllItems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size) {
+        try {
+            System.out.println("=== GET ALL ITEMS DEBUG ===");
+            System.out.println("Page: " + page + ", Size: " + size);
+            
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ItemResponse> items = itemService.getAllItems(pageable);
+            
+            System.out.println("Items loaded successfully: " + items.getTotalElements() + " total items");
+            System.out.println("Items on this page: " + items.getNumberOfElements());
+            
+            return ResponseEntity.ok(items);
+        } catch (Exception e) {
+            System.err.println("Error in getAllItems: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
     
     @PostMapping
@@ -104,16 +140,6 @@ public class ItemController {
             System.err.println("Failed to create item: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
-        }
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<ItemResponse> getItemById(@PathVariable Long id) {
-        try {
-            ItemResponse item = itemService.getItemById(id);
-            return ResponseEntity.ok(item);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
         }
     }
     
