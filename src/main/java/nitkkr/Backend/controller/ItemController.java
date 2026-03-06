@@ -10,11 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/items")
 @CrossOrigin(origins = {
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:5174",
         "https://lostfound-frontend-eight.vercel.app",
         "https://*.vercel.app"
 })
@@ -93,8 +96,28 @@ public class ItemController {
         }
     }
     
+    @PostMapping("/test-create")
+    public ResponseEntity<String> testCreateItem(@RequestBody Map<String, Object> testData) {
+        try {
+            System.out.println("=== TEST CREATE ITEM DEBUG ===");
+            System.out.println("Test data received: " + testData);
+            System.out.println("Keys: " + testData.keySet());
+            System.out.println("==============================");
+            return ResponseEntity.ok("Test create endpoint working! Received: " + testData.size() + " fields");
+        } catch (Exception e) {
+            System.err.println("Error in test create: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Test create failed: " + e.getMessage());
+        }
+    }
+    
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest itemRequest) {
+        System.out.println("=== CREATE ITEM CONTROLLER DEBUG ===");
+        System.out.println("POST request received at /api/items");
+        System.out.println("ItemRequest object: " + itemRequest);
+        System.out.println("====================================");
+        
         try {
             System.out.println("=== CREATE ITEM DEBUG ===");
             System.out.println("Item request received");
@@ -106,28 +129,28 @@ public class ItemController {
             System.out.println("Contact Info: " + itemRequest.getContactInfo());
             System.out.println("User Email: " + itemRequest.getUserEmail());
             System.out.println("User Full Name: " + itemRequest.getUserFullName());
-            System.out.println("Image URL: " + itemRequest.getImageUrl());
+            System.out.println("Image URL: " + (itemRequest.getImageUrl() != null ? "Present" : "Null"));
             System.out.println("Image URL Length: " + (itemRequest.getImageUrl() != null ? itemRequest.getImageUrl().length() : "null"));
             System.out.println("========================");
             
             // Validate required fields
             if (itemRequest.getItemName() == null || itemRequest.getItemName().trim().isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                throw new RuntimeException("Item name is required");
             }
             if (itemRequest.getDescription() == null || itemRequest.getDescription().trim().isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                throw new RuntimeException("Description is required");
             }
             if (itemRequest.getCategory() == null || itemRequest.getCategory().trim().isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                throw new RuntimeException("Category is required");
             }
             if (itemRequest.getLocation() == null || itemRequest.getLocation().trim().isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                throw new RuntimeException("Location is required");
             }
             if (itemRequest.getItemType() == null || itemRequest.getItemType().trim().isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                throw new RuntimeException("Item type is required");
             }
             if (itemRequest.getContactInfo() == null || itemRequest.getContactInfo().trim().isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                throw new RuntimeException("Contact info is required");
             }
             
             // Extract user email from the request
@@ -137,9 +160,9 @@ public class ItemController {
             System.out.println("Item created successfully with ID: " + item.getId());
             return ResponseEntity.ok(item);
         } catch (Exception e) {
-            System.err.println("Failed to create item: " + e.getMessage());
+            System.err.println("ERROR IN CREATE ITEM CONTROLLER: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(500).build();
         }
     }
     
