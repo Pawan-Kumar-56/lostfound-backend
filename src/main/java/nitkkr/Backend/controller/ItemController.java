@@ -60,10 +60,45 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest itemRequest) {
         try {
-            // Extract user email from the request (for now, from the request body)
+            System.out.println("=== CREATE ITEM DEBUG ===");
+            System.out.println("Item request received");
+            System.out.println("Item Name: " + itemRequest.getItemName());
+            System.out.println("Description: " + itemRequest.getDescription());
+            System.out.println("Category: " + itemRequest.getCategory());
+            System.out.println("Location: " + itemRequest.getLocation());
+            System.out.println("Item Type: " + itemRequest.getItemType());
+            System.out.println("Contact Info: " + itemRequest.getContactInfo());
+            System.out.println("User Email: " + itemRequest.getUserEmail());
+            System.out.println("User Full Name: " + itemRequest.getUserFullName());
+            System.out.println("Image URL: " + itemRequest.getImageUrl());
+            System.out.println("Image URL Length: " + (itemRequest.getImageUrl() != null ? itemRequest.getImageUrl().length() : "null"));
+            System.out.println("========================");
+            
+            // Validate required fields
+            if (itemRequest.getItemName() == null || itemRequest.getItemName().trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (itemRequest.getDescription() == null || itemRequest.getDescription().trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (itemRequest.getCategory() == null || itemRequest.getCategory().trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (itemRequest.getLocation() == null || itemRequest.getLocation().trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (itemRequest.getItemType() == null || itemRequest.getItemType().trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (itemRequest.getContactInfo() == null || itemRequest.getContactInfo().trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            // Extract user email from the request
             String userEmail = itemRequest.getUserEmail();
             
             ItemResponse item = itemService.createItem(itemRequest, userEmail);
+            System.out.println("Item created successfully with ID: " + item.getId());
             return ResponseEntity.ok(item);
         } catch (Exception e) {
             System.err.println("Failed to create item: " + e.getMessage());

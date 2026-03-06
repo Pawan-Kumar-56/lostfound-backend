@@ -64,10 +64,32 @@ public class ItemService {
         Item item = new Item();
         item.setItemName(itemRequest.getItemName());
         item.setDescription(itemRequest.getDescription());
-        item.setCategory(nitkkr.Backend.model.Category.valueOf(itemRequest.getCategory().toUpperCase()));
+        
+        // Handle category conversion with error handling
+        try {
+            Category category = Category.valueOf(itemRequest.getCategory().toUpperCase());
+            item.setCategory(category);
+            System.out.println("Category set successfully: " + category);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid category: " + itemRequest.getCategory());
+            System.err.println("Available categories: " + java.util.Arrays.toString(Category.values()));
+            throw new RuntimeException("Invalid category: " + itemRequest.getCategory() + ". Available categories: " + java.util.Arrays.toString(Category.values()));
+        }
+        
         item.setLocation(itemRequest.getLocation());
         item.setItemDate(itemRequest.getItemDate());
-        item.setItemType(nitkkr.Backend.model.ItemType.valueOf(itemRequest.getItemType().toUpperCase()));
+        
+        // Handle item type conversion with error handling
+        try {
+            ItemType itemType = ItemType.valueOf(itemRequest.getItemType().toUpperCase());
+            item.setItemType(itemType);
+            System.out.println("Item type set successfully: " + itemType);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid item type: " + itemRequest.getItemType());
+            System.err.println("Available types: " + java.util.Arrays.toString(ItemType.values()));
+            throw new RuntimeException("Invalid item type: " + itemRequest.getItemType() + ". Available types: " + java.util.Arrays.toString(ItemType.values()));
+        }
+        
         item.setContactInfo(itemRequest.getContactInfo());
         item.setImageUrl(itemRequest.getImageUrl() != null && !itemRequest.getImageUrl().isEmpty() ? itemRequest.getImageUrl() : null);
         
