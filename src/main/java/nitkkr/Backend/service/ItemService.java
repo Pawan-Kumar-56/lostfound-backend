@@ -130,17 +130,26 @@ public class ItemService {
         response.setContactInfo(item.getContactInfo());
         response.setImageUrl(item.getImageUrl());
         response.setStatus(item.getStatus().name());
-        response.setPostedBy(item.getUser().getFullName()); // User name for display
-        response.setPostedByEmail(item.getUser().getEmail()); // User email for filtering
+        
+        // Safe user access with null checks
+        if (item.getUser() != null) {
+            System.err.println("WARNING: Item has no user associated - ID: " + item.getId());
+            response.setPostedBy("Unknown User");
+            response.setPostedByEmail("unknown@example.com");
+        } else {
+            response.setPostedBy(item.getUser().getFullName());
+            response.setPostedByEmail(item.getUser().getEmail());
+        }
+        
         response.setPostedAt(item.getPostedAt());
         response.setResolvedAt(item.getResolvedAt());
         
         System.out.println("=== ITEM RESPONSE DEBUG ===");
-        System.out.println("PostedBy: " + item.getUser().getFullName());
-        System.out.println("PostedByEmail: " + item.getUser().getEmail());
-        System.out.println("ItemID: " + item.getId());
-        System.out.println("ImageUrl: " + item.getImageUrl());
-        System.out.println("ImageUrl Length: " + (item.getImageUrl() != null ? item.getImageUrl().length() : "null"));
+        System.out.println("PostedBy: " + response.getPostedBy());
+        System.out.println("PostedByEmail: " + response.getPostedByEmail());
+        System.out.println("ItemID: " + response.getId());
+        System.out.println("ImageUrl: " + response.getImageUrl());
+        System.out.println("ImageUrl Length: " + (response.getImageUrl() != null ? response.getImageUrl().length() : "null"));
         System.out.println("===============================");
         
         return response;
