@@ -4,6 +4,8 @@ import nitkkr.Backend.dto.ItemRequest;
 import nitkkr.Backend.dto.ItemResponse;
 import nitkkr.Backend.model.Item;
 import nitkkr.Backend.model.User;
+import nitkkr.Backend.model.Category;
+import nitkkr.Backend.model.ItemType;
 import nitkkr.Backend.repository.ItemRepository;
 import nitkkr.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
