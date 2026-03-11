@@ -16,6 +16,8 @@ public class EmailService {
             System.out.println("=== BREVO EMAIL SERVICE DEBUG ===");
             System.out.println("Sending OTP to: " + toEmail);
             System.out.println("OTP: " + otp);
+            System.out.println("Username: raosabh1981@gmail.com");
+            System.out.println("Host: smtp-relay.sendinblue.com:587");
             System.out.println("==============================");
 
             SimpleMailMessage message = new SimpleMailMessage();
