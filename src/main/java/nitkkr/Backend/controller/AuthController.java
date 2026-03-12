@@ -75,44 +75,4 @@ public class AuthController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-
-    @PostMapping("/send-otp")
-    public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
-        try {
-            String email = request.get("email");
-            if (email == null || email.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
-            }
-            
-            authService.generateAndSendOtp(email);
-            return ResponseEntity.ok(Map.of(
-                "message", "OTP sent successfully to your email",
-                "email", email
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Failed to send OTP: " + e.getMessage()));
-        }
-    }
-    
-    @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
-        try {
-            String email = request.get("email");
-            String otp = request.get("otp");
-            
-            if (email == null || otp == null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Email and OTP are required"));
-            }
-            
-            boolean isValid = authService.verifyOtp(email, otp);
-            if (isValid) {
-                return ResponseEntity.ok(Map.of("message", "OTP verified successfully", "verified", true));
-            } else {
-                return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired OTP", "verified", false));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Failed to verify OTP: " + e.getMessage()));
-        }
-    }
 }
